@@ -25,7 +25,7 @@ Tên  | Chuyên môn  | Contact
 Phạm Quốc Việt | Hardware        | [Email](mailto:astralnuts123@gmail.com)
 Trần Hồng Quân | Hardware        | 
 Lương Sơn Tùng | Lead Firmware   | [Email](mailto:sontunghero36@gmail.com)
-Lương Sơn Tùng | Firmware        | [Email](mailto:everwellmax@gmail.com)
+Lương Thế Vinh | Firmware        | [Email](mailto:everwellmax@gmail.com)
 
 ## Phân tích yêu cầu
 
