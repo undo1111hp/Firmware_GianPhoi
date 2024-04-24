@@ -1,43 +1,70 @@
-#include <Arduino.h>
+#include<Arduino.h>
 
-int motor_p = 4; // D2
-int motor_n = 5; // D1
-int button_left = 14; // D5
-int button_right = 12; // D6
+const int PIN_MOTOR_CLOCKWISE = 4;                // D2
+const int PIN_MOTOR_COUNTER_CLOCKWISE = 5;        // D1
+const int PIN_BTN_UP = 14;                        // D5
+const int PIN_BTN_DOWN = 12;                      // D6
+
 int count = 1;
 
-void setup(){	
-    pinMode(motor_p, OUTPUT);
-    pinMode(motor_n, OUTPUT);
-    pinMode(button_left, INPUT_PULLUP);
-    pinMode(button_right, INPUT_PULLUP);
-}
-void loop(){
-    int speed = (count*6);
-    constrain(speed, 1, 191);
-    if(digitalRead(button_left) == HIGH && digitalRead(button_right) == LOW){
-    analogWrite(motor_p, LOW);
-    analogWrite(motor_n, speed); 
-    count++;
-    delay(100);
-    }
-    if(digitalRead(button_left) == LOW && digitalRead(button_right) == HIGH){
-    analogWrite(motor_p, LOW);
-    analogWrite(motor_n, speed); 
-    count++;
-    delay(100);
-    }
-    if(digitalRead(button_left) == HIGH && digitalRead(button_right) == HIGH){
-    analogWrite(motor_p, LOW);
-    analogWrite(motor_n, LOW); 
-    count = 1;
-    delay(100);
-    }
-    if(digitalRead(button_left) == LOW && digitalRead(button_right) == LOW){
-    analogWrite(motor_p, LOW);
-    analogWrite(motor_n, LOW); 
-    count = 1;
-    delay(100);
-    }
+bool buttonUpState() {
+  if (digitalRead(PIN_BTN_UP) == 0) {
+    Serial.println("[DEBUG] buttonUpState(): Going Up!");
+    return 1;
+  }
+  return 0;
 }
 
+bool buttonDownState() {
+  if (digitalRead(PIN_BTN_DOWN) == 0) {
+    Serial.println("[DEBUG] buttonDownState(): Going Down!");
+    return 1;
+  }
+  return 0;
+}
+
+void setMotorSpeed(bool dir, bool val) {
+
+  // dir: direction of motor | 1 for clockwise, 0 for counter clockwise
+  // val: value of speed | (currently 1 for on and 0 for 0)
+
+  if (val == 1) {
+    if (dir == 1) {
+      digitalWrite(PIN_MOTOR_CLOCKWISE, 1);
+      digitalWrite(PIN_MOTOR_COUNTER_CLOCKWISE, 0);
+    }
+    if (dir == 0) {
+      digitalWrite(PIN_MOTOR_CLOCKWISE, 0);
+      digitalWrite(PIN_MOTOR_COUNTER_CLOCKWISE, 1);
+    }
+  } else {
+    digitalWrite(PIN_MOTOR_CLOCKWISE, 0);
+    digitalWrite(PIN_MOTOR_COUNTER_CLOCKWISE, 0);
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(PIN_MOTOR_CLOCKWISE, OUTPUT);
+  pinMode(PIN_MOTOR_COUNTER_CLOCKWISE, OUTPUT);
+  pinMode(PIN_BTN_UP, INPUT_PULLUP);
+  pinMode(PIN_BTN_DOWN, INPUT_PULLUP);
+}
+
+void loop() {
+  int speed = (count * 6);
+
+  speed = constrain(speed, 1, 191);
+ 
+  if (buttonUpState() && buttonDownState()) {
+    setMotorSpeed(0, 0);
+  } else if(buttonUpState()) {
+    setMotorSpeed(0, 1);
+  } else if(buttonDownState()) {
+    setMotorSpeed(1, 1);
+  } else {
+    setMotorSpeed(0, 0);
+  }
+
+}
