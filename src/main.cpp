@@ -4,6 +4,7 @@ const int PIN_MOTOR_CLOCKWISE = 4;                // D2
 const int PIN_MOTOR_COUNTER_CLOCKWISE = 5;        // D1
 const int PIN_BTN_UP = 14;                        // D5
 const int PIN_BTN_DOWN = 12;                      // D6
+const int PIN_HALL = 2;                            // D4
 
 int count = 1;
 
@@ -45,23 +46,24 @@ void setMotorSpeed(bool dir, bool val) {
 
 void setup() {
   Serial.begin(9600);
-
+  // wifi_set_sleep_type(MODEM_SLEEP_T);
   pinMode(PIN_MOTOR_CLOCKWISE, OUTPUT);
   pinMode(PIN_MOTOR_COUNTER_CLOCKWISE, OUTPUT);
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
   pinMode(PIN_BTN_DOWN, INPUT_PULLUP);
+  pinMode(PIN_HALL, INPUT_PULLUP);
 }
 
 void loop() {
+  int sensed = digitalRead(PIN_HALL);
   int speed = (count * 6);
-
   speed = constrain(speed, 1, 191);
  
   if (buttonUpState() && buttonDownState()) {
     setMotorSpeed(0, 0);
-  } else if(buttonUpState()) {
+  } else if(buttonUpState() && sensed == HIGH) {
     setMotorSpeed(0, 1);
-  } else if(buttonDownState()) {
+  } else if(buttonDownState() && sensed == HIGH) {
     setMotorSpeed(1, 1);
   } else {
     setMotorSpeed(0, 0);
